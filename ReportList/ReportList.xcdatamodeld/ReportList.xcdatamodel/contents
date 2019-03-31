@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="14490.98" systemVersion="18D109" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+    <entity name="Locations" representedClassName="Locations" syncable="YES" codeGenerationType="class">
+        <attribute name="acreageCalc" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="acreageDeeded" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="address1" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="address2" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="address3" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="addressNumber" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="addressStreetName" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="addressStreetPrefix" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="addressStreetSuffix" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="addressStreetType" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="bldgSqft" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="category" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="censusZip" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="city" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="countyID" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="countyName" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="date" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="landUseClass" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="landUseCode" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="latitude" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="longitude" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="mailAddress1" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="mailAddress2" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="mailAddress3" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="mailName" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="mktValueBldg" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="mktValueLand" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="mktValueTotal" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="munID" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="muniName" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="nghCode" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="owner" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="parcelID" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="physicalCity" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="physicalZip" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="rsauaID" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="salePrice" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="schoolDistID" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="stateAbbr" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="storyHeight" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="transDate" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="zip" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
+    <elements>
+        <element name="Locations" positionX="-54" positionY="-9" width="128" height="675"/>
+    </elements>
+</model>
