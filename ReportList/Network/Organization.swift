@@ -75,8 +75,19 @@ struct Organization: Encodable {
         case recordedOwner = "f829aa4b5d02943870943676a14331c083045cef"
     }
     
-    init(location: LocationViewModel) {
-        
+    init?(location: LocationViewModel) {
+        guard let result = location.getLocation().results?.first else { return nil }
+        name = "Test Name"
+        country_code = ""
+        let formatter  = DateFormatter()
+        formatter.dateFormat = "MM/dd/yyyy HH:mm:ss"
+        let date = formatter.string(from: Date())
+        update_time = date
+        add_time = date
+        visible_to = "3"
+        let addresses = location.getAdress()
+        self.address = "\(addresses.0) \(addresses.2)"
+        address_street_number = result.addr_number ?? ""
     }
 }
 

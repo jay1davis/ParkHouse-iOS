@@ -53,8 +53,26 @@ struct Person: Encodable {
         case mail_street2 = "de0504485bd6592d8b1266ef8bfd694796dc1bab"
     }
     
-    init(location: LocationDetails) {
-        
+    init?(location: LocationViewModel) {
+        guard let result = location.getLocation().results?.first else { return nil }
+        name = result.mail_name ?? ""
+        phone = "" // cant see any phone details from report all API
+        email = "test@gmail.com" // no email either
+        add_time = ""
+        update_time = ""
+        org_id = 6788
+        owner_id = 9551197
+        open_deals_count = 0
+        visible_to = ""
+        next_activity_date = ""
+        last_activity_date = ""
+        notes = ""
+        altPhone = ""
+        mail_zip = result.census_zip ?? ""
+        mail_state = result.state_abbr ?? ""
+        mail_city = result.physcity ?? ""
+        mail_street = result.mail_address1 ?? ""
+        mail_street2 = result.mail_address2 ?? ""
     }
 }
 
@@ -64,7 +82,22 @@ struct PersonResponse: Codable {
 
 struct GetPerson: RequestType {
     typealias ResponseType = PersonResponse
-    var data: RequestData {
-        return RequestData(path: "https://recapp-sandbox-24b76d.pipedrive.com/v1/persons?api_token=7f8bfc2b4fc6cd6533c5a5cc2f7342cf36d9d1ba", method: .post)
+    var location: LocationViewModel
+    
+    init(location: LocationViewModel) {
+        self.location = location
     }
+    
+    var data: RequestData {
+        let data = Person(location: location)
+        do {
+            let encodedData = try JSONEncoder().encode(data!)
+            return RequestData(path: "https://recapp-sandbox-24b76d.pipedrive.com/v1/persons?api_token=7f8bfc2b4fc6cd6533c5a5cc2f7342cf36d9d1ba", method: .post, body: encodedData)
+        }
+        catch {
+            fatalError("Could not encode data")
+        }
+    }
+    
+    
 }
