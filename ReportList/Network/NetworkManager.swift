@@ -26,17 +26,20 @@ struct RequestData {
     public let method: HTTPMethod
     public let params: [String: Any?]?
     public let headers: [String: String]?
+    public let body: Data?
     
     public init (
         path: String,
         method: HTTPMethod = .get,
         params: [String: Any?]? = nil,
-        headers: [String: String]? = nil
+        headers: [String: String]? = nil,
+        body: Data? = nil
         ) {
         self.path = path
         self.method = method
         self.params = params
         self.headers = headers
+        self.body = body
     }
 }
 
@@ -57,6 +60,7 @@ extension RequestType {
                 do {
                     let jsonDecoder = JSONDecoder()
                     let result = try jsonDecoder.decode(ResponseType.self, from: responseData)
+                    print(result)
                     DispatchQueue.main.async {
                         onSuccess(result)
                     }
@@ -96,6 +100,10 @@ struct URLSessionNetworkDispatcher: NetworkDispatcher {
             if let params = request.params {
                 urlRequest.httpBody = try JSONSerialization.data(withJSONObject: params, options: [])
             }
+            
+            if let data = request.body {
+                urlRequest.httpBody = data
+            }
         } catch let error {
             onError(error)
             return
@@ -122,12 +130,12 @@ struct URLSessionNetworkDispatcher: NetworkDispatcher {
 }
 
 struct LocationDetails: Codable {
-    let status: String
-    let count: Int
-    let page: Int
-    let rpp: Int
+    let status: String?
+    let count: Int?
+    let page: Int?
+    let rpp: Int?
     var results: [Result]? = []
-    let query: String
+    let query: String?
 }
 struct Result: Codable {
      let parcel_id: String?
@@ -171,7 +179,7 @@ struct Result: Codable {
 struct GetLocation: RequestType {
     typealias ResponseType = LocationDetails
     var params: [String: Any?] = [
-        "client": "HeekSKn9aT",
+        "client": "446ZM5WrP7",
         "v":"2",
         "spatial_intersect":"POINT(-84.3350391 33.7129586)",
         "si_srid":"4326"
@@ -181,4 +189,3 @@ struct GetLocation: RequestType {
     }
     
 }
-

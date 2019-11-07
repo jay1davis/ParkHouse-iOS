@@ -1,79 +1,56 @@
 //
-//  ViewController.swift
+//  LocationViewModel.swift
 //  ReportList
 //
-//  Created by Naresh kumar Nagulavancha on 3/27/19.
+//  Created by Naresh Nagulavancha on 11/7/19.
 //  Copyright © 2019 Naresh kumar Nagulavancha. All rights reserved.
 //
 
+import CoreData
 import UIKit
 import GoogleMaps
-import CoreData
 
-class ViewController: UIViewController {
-
-    var locationManager = CLLocationManager()
+class LocationViewModel {
+    private var location: LocationDetails
+    private var category: String
+    private var point: CLLocationCoordinate2D
+    private var polygonPoints: [CLLocationCoordinate2D]
     
-    @IBOutlet var mapView: GMSMapView!
-    @IBOutlet var helperView: UIView!
-    @IBOutlet var chooseButton: DropDownButton!
-    @IBOutlet var ownerLabel: UILabel!
-    @IBOutlet var addressLabel1: UILabel!
-    @IBOutlet var addressLabel2: UILabel!
-    @IBOutlet var navigateButton: UIButton!
-    @IBOutlet var saveButton: UIButton!
-    
-    
-    let chooseCategory = DropDown()
-    var tempLocationDetails: LocationDetails? = nil
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        
-        helperView.layer.cornerRadius = 5
-        
-        setUpCategory()
-        
-        // Do any additional setup after loading the view.
-        self.mapView.mapType = kGMSTypeHybrid
-        self.mapView.delegate = self
-        
-        //Location Manager code to fetch current location
-        self.locationManager.delegate = self
-        self.locationManager.requestWhenInUseAuthorization()
-        self.locationManager.startUpdatingLocation()
-    
-        
-        GetLocation().execute(onSuccess: { (location: LocationDetails) in
-            // Do something with users
-            print(location)
-        },
-        onError: { (error: Error) in
-            // Do something with error
-            print(error)
-        })
+    init(location: LocationDetails, category: String, point: CLLocationCoordinate2D, points: [CLLocationCoordinate2D]) {
+        self.location = location
+        self.category = category
+        self.point = point
+        self.polygonPoints = points
     }
     
     
-    
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        helperView.isHidden = true
+    func getLocation() -> LocationDetails {
+        return location
+    }
+        
+    func getCategory() -> String {
+        return category
     }
     
-    @IBAction func chooseCategoryTapped(_ sender: Any) {
-        chooseCategory.show()
+    func getPoint() -> [Double] {
+        return [point.latitude, point.longitude]
     }
     
-    
-    @IBAction func saveBtnTapped(_ sender: Any) {
-        save()
-    }
-    
-    func save() {
-        guard let location = tempLocationDetails else {
-            return
+    func getPolygonPoints() -> [[Double]] {
+        return polygonPoints.map {
+            return [$0.longitude, $0.latitude]
         }
+    }
+    
+    func setLocation(location: LocationDetails) {
+        self.location = location
+    }
+    
+    func setCategory(cat: String) {
+        self.category = cat
+    }
+    
+    func save(isSuccess: (Bool) -> Void) {
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
         let context = appDelegate.persistentContainer.viewContext
         let entity = NSEntityDescription.entity(forEntityName: "Locations", in: context)
@@ -83,12 +60,7 @@ class ViewController: UIViewController {
         let formatter  = DateFormatter()
         formatter.dateFormat = "MM/dd/yyyy HH:mm"
         let date = formatter.string(from: Date())
-        var category = ""
-        if let item = chooseCategory.selectedItem {
-            category = item
-        } else {
-            category = "N/A"
-        }
+        
         newLocation.setValue(result?.acreage_calc ?? "", forKey: "acreageCalc")
         newLocation.setValue(result?.acreage_deeded, forKey: "acreageDeeded")
         
@@ -138,7 +110,6 @@ class ViewController: UIViewController {
         
         do {
             try context.save()
-            
             let request = NSFetchRequest<NSFetchRequestResult>(entityName: "Locations")
             //request.predicate = NSPredicate(format: "age = %@", "12")
             request.returnsObjectsAsFaults = false
@@ -147,18 +118,20 @@ class ViewController: UIViewController {
                 print(result)
                 
             } catch {
-                
                 print("Failed")
+                isSuccess(false)
             }
+            isSuccess(true)
         } catch {
             print("Failed saving")
+            isSuccess(false)
         }
         
         
     }
     
     func getAdress() -> (String, String, String){
-        guard let result = tempLocationDetails?.results?.first else {
+        guard let result = location.results?.first else {
             return ("", "", "")
         }
         
@@ -188,83 +161,39 @@ class ViewController: UIViewController {
         
     }
     
-    func setUpCategory() {
-        chooseCategory.anchorView = chooseButton
-    
-        chooseCategory.bottomOffset = CGPoint(x: 0, y: chooseButton.bounds.height)
+    func sendAllRequests() {
+        let ledgerService = GetLedger(location: self)
+        let organizationService = GetOrganization()
+        let personService = GetPerson()
         
-        chooseCategory.dataSource = ["Distressed Commercial", "Commercial Lot", "Retail/Car Wash Site", "Triple Net Lease Site", "Apartments", "Hotel", "Developer", "Distressed Residential", "Residential Lots"]
+        let myGroup = DispatchGroup()
         
-        chooseCategory.selectionAction = { [weak self] (index, item) in
-            self?.chooseButton.setTitle(item, for: .normal)
+        myGroup.enter()
+        organizationService.execute(onSuccess: { (orgResponse: OrganizationResponse) in
+            myGroup.leave()
+            myGroup.enter()
+            personService.execute(onSuccess: { (personResponse: PersonResponse) in
+                myGroup.leave()
+            }, onError: { (error) in
+                myGroup.leave()
+            })
+        }, onError: { (error) in
+           myGroup.leave()
+        })
+        
+        myGroup.enter()
+        ledgerService.execute(onSuccess: { (ledgerResponse: LedgerResponse) in
+            myGroup.leave()
+        }, onError: { (error) in
+            myGroup.leave()
+        })
+        
+        myGroup.notify(queue: .main) {
+            print("Finished all requests")
         }
     }
-    
 }
 
-extension ViewController: CLLocationManagerDelegate {
-   
-    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        
-        let location = locations.last
-        
-        let camera = GMSCameraPosition.camera(withLatitude: (location?.coordinate.latitude)!, longitude: (location?.coordinate.longitude)!, zoom: 17.0)
-        
-        self.mapView?.animate(to: camera)
-        
-        //Finally stop updating location otherwise it will come again and again in this delegate
-        self.locationManager.stopUpdatingLocation()
-        
-    }
-
-}
-
-extension ViewController: GMSMapViewDelegate {
-    
-    func mapView(_ mapView: GMSMapView, didTapAt coordinate: CLLocationCoordinate2D) {
-        self.helperView.isHidden = true
-    }
-    
-    func mapView(_ mapView: GMSMapView, didLongPressAt coordinate: CLLocationCoordinate2D) {
-        print("Coordinates: \(coordinate.latitude), \(coordinate.longitude)")
-        mapView.clear()
-        var locationService = GetLocation()
-        locationService.params["spatial_intersect"] = "POINT(\(coordinate.longitude) \(coordinate.latitude))"
-        locationService.execute(onSuccess: { (location: LocationDetails) in
-            // Do something with users
-            self.tempLocationDetails = location
-            let addresses = self.getAdress()
-            DispatchQueue.main.async {
-                self.ownerLabel.text = location.results?.first?.owner ?? "Not available"
-                self.addressLabel1.text = addresses.0
-                self.addressLabel2.text = addresses.2
-            }
-            let path = GMSMutablePath()
-            let coordinates = location.results?.first?.geom_as_wkt
-            
-            guard let locations = coordinates  else {
-                return
-            }
-            for i in locations.getLocations() {
-                path.add(i)
-            }
-            
-            let polyLine = GMSPolyline(path: path)
-            polyLine.strokeColor = UIColor.red
-            polyLine.strokeWidth = polyLine.strokeWidth + 1
-            polyLine.map = mapView
-            if self.helperView.isHidden {
-                UIView.animate(withDuration: 0.2, animations: {
-                    self.helperView.isHidden = false
-                })
-            }
-        },
-                                onError: { (error: Error) in
-                                    // Do something with error
-                                    print(error)
-        })
-    }
-}
 
 extension String {
     func getLocations() -> [CLLocationCoordinate2D] {
@@ -286,4 +215,3 @@ extension String {
         return coordinates
     }
 }
-
