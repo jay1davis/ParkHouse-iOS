@@ -19,6 +19,7 @@ class ViewController: UIViewController {
     @IBOutlet var ownerLabel: UILabel!
     @IBOutlet var addressLabel1: UILabel!
     @IBOutlet var saveButton: DropDownButton!
+    @IBOutlet weak var searchBar: UISearchBar!
     
     
     let chooseCategory = DropDown()
@@ -35,6 +36,7 @@ class ViewController: UIViewController {
         // Do any additional setup after loading the view.
         self.mapView.mapType = .hybrid
         self.mapView.delegate = self
+        self.searchBar.delegate = self
         
         //Location Manager code to fetch current location
         self.locationManager.delegate = self
@@ -161,6 +163,23 @@ extension ViewController: GMSMapViewDelegate {
                                     // Do something with error
                                     print(error)
         })
+    }
+}
+
+extension ViewController: UISearchBarDelegate {
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        guard let text = searchBar.text, text.count > 2 else { return }
+        CLGeocoder().geocodeAddressString(text) { (placeMarks, error) in
+            if let _ = error {
+                return
+            }
+            if let placeMark = placeMarks?[0] {
+                let location = placeMark.location!
+                self.mapView.animate(toLocation: location.coordinate)
+                return
+            }
+        }
+        
     }
 }
 

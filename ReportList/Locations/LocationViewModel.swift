@@ -164,7 +164,7 @@ class LocationViewModel {
     func sendAllRequests() {
         let ledgerService = GetLedger(location: self)
         let organizationService = GetOrganization()
-        let personService = GetPerson()
+        let personService = GetPerson(location: self)
         
         let myGroup = DispatchGroup()
         

@@ -97,8 +97,21 @@ struct OrganizationResponse: Codable {
 
 struct GetOrganization: RequestType {
     typealias ResponseType = OrganizationResponse
+    var location: LocationViewModel
+    
+    init(location: LocationViewModel) {
+        self.location = location
+    }
+    
     var data: RequestData {
-        return RequestData(path: "https://recapp-sandbox-24b76d.pipedrive.com/v1/organizations?api_token=7f8bfc2b4fc6cd6533c5a5cc2f7342cf36d9d1ba", method: .post)
+        let data = Organization(location: location)
+        do {
+            let encodedData = try JSONEncoder().encode(data)
+            return RequestData(path: "https://recapp-sandbox-24b76d.pipedrive.com/v1/organizations?api_token=7f8bfc2b4fc6cd6533c5a5cc2f7342cf36d9d1ba", method: .post, body: encodedData)
+        }
+        catch {
+            fatalError("Could not encode data")
+        }
     }
     
 }

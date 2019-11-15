@@ -107,6 +107,7 @@
                         <outlet property="mapView" destination="Lsm-rB-nS2" id="DlG-we-zHf"/>
                         <outlet property="ownerLabel" destination="2zg-0V-vZq" id="Occ-6I-c1Q"/>
                         <outlet property="saveButton" destination="4EN-aU-FdR" id="pY4-f3-NOU"/>
+                        <outlet property="searchBar" destination="Yad-fm-ut1" id="5BL-9P-dJB"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
