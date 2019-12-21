@@ -163,15 +163,14 @@ class LocationViewModel {
     
     func sendAllRequests() {
         let ledgerService = GetLedger(location: self)
-        let organizationService = GetOrganization()
-        let personService = GetPerson(location: self)
+        let organizationService = GetOrganization(location: self)
+        var personService = GetPerson(location: self)
         
         let myGroup = DispatchGroup()
         
         myGroup.enter()
         organizationService.execute(onSuccess: { (orgResponse: OrganizationResponse) in
-            myGroup.leave()
-            myGroup.enter()
+            personService.orgResponse = orgResponse
             personService.execute(onSuccess: { (personResponse: PersonResponse) in
                 myGroup.leave()
             }, onError: { (error) in

@@ -17,7 +17,7 @@ struct Person: Encodable {
     var email: String = ""
     var add_time: String = "blank"
     var update_time: String = ""
-    var org_id: UInt32 = 0
+    var org_id: UInt64 = 0
     var owner_id: UInt64 = 0
     var open_deals_count: UInt = 0
     var visible_to: String = ""
@@ -53,15 +53,17 @@ struct Person: Encodable {
         case mail_street2 = "de0504485bd6592d8b1266ef8bfd694796dc1bab"
     }
     
-    init?(location: LocationViewModel) {
+    init?(location: LocationViewModel, org: OrganizationResponse) {
         guard let result = location.getLocation().results?.first else { return nil }
-        name = result.mail_name ?? ""
+        name = result.owner ?? result.mail_name ?? "Our Neighbor"
         phone = "" // cant see any phone details from report all API
         email = "test@gmail.com" // no email either
         add_time = ""
         update_time = ""
-        org_id = 6788
-        owner_id = 9551197
+        
+        // org_id and owner_id we get from organzation apu call use them here
+        org_id = org.data.id
+        owner_id = org.data.owner_id.id
         open_deals_count = 0
         visible_to = ""
         next_activity_date = ""
@@ -83,16 +85,19 @@ struct PersonResponse: Codable {
 struct GetPerson: RequestType {
     typealias ResponseType = PersonResponse
     var location: LocationViewModel
+    var orgResponse: OrganizationResponse?
     
     init(location: LocationViewModel) {
         self.location = location
     }
+
+    var headers: [String: String] = ["Content-Type": "application/json"]
     
     var data: RequestData {
-        let data = Person(location: location)
+        let data = Person(location: location, org: orgResponse!)
         do {
             let encodedData = try JSONEncoder().encode(data!)
-            return RequestData(path: "https://recapp-sandbox-24b76d.pipedrive.com/v1/persons?api_token=7f8bfc2b4fc6cd6533c5a5cc2f7342cf36d9d1ba", method: .post, body: encodedData)
+            return RequestData(path: "https://recapp-sandbox-24b76d.pipedrive.com/v1/persons?api_token=7f8bfc2b4fc6cd6533c5a5cc2f7342cf36d9d1ba", method: .post, headers: headers, body: encodedData)
         }
         catch {
             fatalError("Could not encode data")

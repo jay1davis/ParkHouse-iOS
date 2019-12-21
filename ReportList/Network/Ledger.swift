@@ -66,8 +66,8 @@ struct LedgerBody: Codable {
         addrStreetName = result.addr_street_name ?? ""
         addrStreetSuffix = result.addr_street_suffix ?? ""
         addrStreetType = result.addr_street_type ?? ""
-        physcity = result.physcity ?? ""
-        physzip = result.physzip ?? ""
+        physcity = result.physcity ?? result.mail_address3?.components(separatedBy: " ").first ?? "N/A"
+        physzip = result.physzip ?? result.mail_address3?.components(separatedBy: " ").last ?? "N/A"
         censusZip = result.census_zip ?? ""
         owner = result.owner ?? ""
         mailName = result.mail_name ?? ""
@@ -117,6 +117,7 @@ struct GetLedger: RequestType {
     let location: LocationViewModel
     
     var headers: [String: String] = [
+        "Content-Type": "application/json",
         "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVkMzFkN2MyN2ZhYzNjNDYyZDc1OWNkYSIsImlhdCI6MTU2NTEzNjcxNX0.9iNuzko3Hyt9R4_6RrjMpmuNNp3rS39maWU0ll47mJo"
     ]
     

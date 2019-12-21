@@ -59,6 +59,8 @@ extension RequestType {
             onSuccess: { (responseData: Data) in
                 do {
                     let jsonDecoder = JSONDecoder()
+                    let rawData = try JSONSerialization.jsonObject(with: responseData, options: .allowFragments)
+                    print(rawData)
                     let result = try jsonDecoder.decode(ResponseType.self, from: responseData)
                     print(result)
                     DispatchQueue.main.async {
@@ -71,6 +73,7 @@ extension RequestType {
                 }
         },
             onError: { (error: Error) in
+                print(error)
                 DispatchQueue.main.async {
                     onError(error)
                 }
@@ -179,7 +182,7 @@ struct Result: Codable {
 struct GetLocation: RequestType {
     typealias ResponseType = LocationDetails
     var params: [String: Any?] = [
-        "client": "446ZM5WrP7",
+        "client": "54RY88KDHy",
         "v":"2",
         "spatial_intersect":"POINT(-84.3350391 33.7129586)",
         "si_srid":"4326"

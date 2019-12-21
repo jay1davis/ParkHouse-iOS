@@ -47,11 +47,11 @@ class ViewController: UIViewController {
         mapView.settings.myLocationButton = true
         mapView.padding = UIEdgeInsets(top: 0, left: 0, bottom: 80, right: 16)
         
-        GetOrganization().execute(onSuccess: { (location: OrganizationResponse) in
-            print(location)
-        }, onError: { (error) in
-            print(error)
-        })
+//        GetOrganization(location: T##LocationViewModel).execute(onSuccess: { (location: OrganizationResponse) in
+//            print(location)
+//        }, onError: { (error) in
+//            print(error)
+//        })
     }
     
     
@@ -145,7 +145,7 @@ extension ViewController: GMSMapViewDelegate {
             self.viewModel = LocationViewModel(location: location, category: "", point: coordinate, points: locations.getLocations())
             let addresses = self.viewModel!.getAdress()
             DispatchQueue.main.async {
-                self.ownerLabel.text = location.results?.first?.owner ?? "Not available"
+                self.ownerLabel.text = location.results?.first?.owner ?? "Our Neighbor"
                 self.addressLabel1.text = "\(addresses.0) \(addresses.2)"
             }
             
@@ -175,6 +175,11 @@ extension ViewController: UISearchBarDelegate {
             }
             if let placeMark = placeMarks?[0] {
                 let location = placeMark.location!
+                let marker = GMSMarker()
+                marker.position = location.coordinate
+                marker.title = placeMark.name
+                marker.snippet = placeMark.subLocality
+                marker.map = self.mapView
                 self.mapView.animate(toLocation: location.coordinate)
                 return
             }

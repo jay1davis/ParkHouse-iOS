@@ -77,22 +77,54 @@ struct Organization: Encodable {
     
     init?(location: LocationViewModel) {
         guard let result = location.getLocation().results?.first else { return nil }
-        name = "Test Name"
-        country_code = ""
+        name = result.owner ?? result.mail_name ?? "Our Neighbor"
+        country_code = "US"
         let formatter  = DateFormatter()
         formatter.dateFormat = "MM/dd/yyyy HH:mm:ss"
         let date = formatter.string(from: Date())
         update_time = date
         add_time = date
         visible_to = "3"
+        
         let addresses = location.getAdress()
         self.address = "\(addresses.0) \(addresses.2)"
+        //subpremis is empty
+        self.address_street_number = result.addr_number ?? ""
+        self.address_route = result.addr_street_name ?? ""
+        //sublocality is empty
+        self.address_locality = result.physcity ?? ""
+        self.address_admin_area_level_1 = result.state_abbr ?? ""
+        self.address_admin_area_level_2 = result.county_name ?? ""
+        self.address_country = "United States"
+        self.address_postal_code = result.physzip ?? ""
+        self.address_formatted_address = "\(addresses.0) \(addresses.2)"
+        self.parcelCounty = result.county_name ?? ""
+        self.parcelNumber = result.parcel_id ?? ""
+        self.taxAssessedValue = result.mkt_val_tot ?? "0"
+        self.lastSalePrice = result.sale_price ?? "0"
+        self.lastSaleDate = result.trans_date ?? ""
+        self.zoning = result.land_use_code ?? ""
+        self.category = location.getCategory()
+        self.recordedOwner = result.owner ?? ""
+        // land area is empty
+//            self.parcelCounty = result.parce
+        
         address_street_number = result.addr_number ?? ""
     }
 }
 
 struct OrganizationResponse: Codable {
     let success: Bool
+    let data: Org
+}
+
+struct Org: Codable {
+    let id: UInt64
+    let owner_id: Owner
+}
+
+struct Owner: Codable {
+    let id: UInt64
 }
 
 struct GetOrganization: RequestType {
@@ -102,12 +134,14 @@ struct GetOrganization: RequestType {
     init(location: LocationViewModel) {
         self.location = location
     }
+
+    var headers: [String: String] = ["Content-Type": "application/json"]
     
     var data: RequestData {
         let data = Organization(location: location)
         do {
             let encodedData = try JSONEncoder().encode(data)
-            return RequestData(path: "https://recapp-sandbox-24b76d.pipedrive.com/v1/organizations?api_token=7f8bfc2b4fc6cd6533c5a5cc2f7342cf36d9d1ba", method: .post, body: encodedData)
+            return RequestData(path: "https://recapp-sandbox-24b76d.pipedrive.com/v1/organizations?api_token=7f8bfc2b4fc6cd6533c5a5cc2f7342cf36d9d1ba", method: .post, headers: headers, body: encodedData)
         }
         catch {
             fatalError("Could not encode data")
