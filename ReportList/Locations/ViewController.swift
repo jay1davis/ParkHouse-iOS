@@ -9,6 +9,7 @@
 import UIKit
 import GoogleMaps
 import CoreData
+import IHProgressHUD
 
 class ViewController: UIViewController {
 
@@ -92,7 +93,10 @@ class ViewController: UIViewController {
                         alert.addAction(alertAction)
                         self.present(alert, animated: true, completion: nil)
                     } else {
-                        viewModel.sendAllRequests()
+                        IHProgressHUD.show()
+                        viewModel.sendAllRequests() {
+                            IHProgressHUD.dismiss()
+                        }
                     }
                 }
             }

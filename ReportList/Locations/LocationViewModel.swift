@@ -161,7 +161,7 @@ class LocationViewModel {
         
     }
     
-    func sendAllRequests() {
+    func sendAllRequests(onSuccess: @escaping () -> Void) {
         let ledgerService = GetLedger(location: self)
         let organizationService = GetOrganization(location: self)
         var personService = GetPerson(location: self)
@@ -177,7 +177,7 @@ class LocationViewModel {
                 myGroup.leave()
             })
         }, onError: { (error) in
-           myGroup.leave()
+            myGroup.leave()
         })
         
         myGroup.enter()
@@ -188,6 +188,7 @@ class LocationViewModel {
         })
         
         myGroup.notify(queue: .main) {
+            onSuccess()
             print("Finished all requests")
         }
     }
