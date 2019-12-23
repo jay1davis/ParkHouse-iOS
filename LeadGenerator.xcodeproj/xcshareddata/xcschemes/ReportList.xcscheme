@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "3E779818224C481000B7F578"
-               BuildableName = "ReportList.app"
-               BlueprintName = "ReportList"
-               ReferencedContainer = "container:ReportList.xcodeproj">
+               BuildableName = "ParkHouseGroup Lead Generator.app"
+               BlueprintName = "LeadGenerator"
+               ReferencedContainer = "container:LeadGenerator.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -27,19 +27,17 @@
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       shouldUseLaunchSchemeArgsEnv = "YES">
-      <Testables>
-      </Testables>
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "3E779818224C481000B7F578"
-            BuildableName = "ReportList.app"
-            BlueprintName = "ReportList"
-            ReferencedContainer = "container:ReportList.xcodeproj">
+            BuildableName = "ParkHouseGroup Lead Generator.app"
+            BlueprintName = "LeadGenerator"
+            ReferencedContainer = "container:LeadGenerator.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
-      <AdditionalOptions>
-      </AdditionalOptions>
+      <Testables>
+      </Testables>
    </TestAction>
    <LaunchAction
       buildConfiguration = "Debug"
@@ -57,13 +55,11 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "3E779818224C481000B7F578"
-            BuildableName = "ReportList.app"
-            BlueprintName = "ReportList"
-            ReferencedContainer = "container:ReportList.xcodeproj">
+            BuildableName = "ParkHouseGroup Lead Generator.app"
+            BlueprintName = "LeadGenerator"
+            ReferencedContainer = "container:LeadGenerator.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
-      <AdditionalOptions>
-      </AdditionalOptions>
    </LaunchAction>
    <ProfileAction
       buildConfiguration = "Release"
@@ -76,9 +72,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "3E779818224C481000B7F578"
-            BuildableName = "ReportList.app"
-            BlueprintName = "ReportList"
-            ReferencedContainer = "container:ReportList.xcodeproj">
+            BuildableName = "ParkHouseGroup Lead Generator.app"
+            BlueprintName = "LeadGenerator"
+            ReferencedContainer = "container:LeadGenerator.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>
@@ -87,6 +83,7 @@
    </AnalyzeAction>
    <ArchiveAction
       buildConfiguration = "Release"
+      customArchiveName = "LeadGenerator"
       revealArchiveInOrganizer = "YES">
    </ArchiveAction>
 </Scheme>
