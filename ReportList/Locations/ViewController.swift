@@ -5,11 +5,10 @@
 //  Created by Naresh kumar Nagulavancha on 3/27/19.
 //  Copyright © 2019 Naresh kumar Nagulavancha. All rights reserved.
 //
-
 import UIKit
 import GoogleMaps
 import CoreData
-import IHProgressHUD
+import JGProgressHUD
 
 class ViewController: UIViewController {
 
@@ -26,6 +25,7 @@ class ViewController: UIViewController {
     let chooseCategory = DropDown()
     var tempLocationDetails: LocationDetails? = nil
     var viewModel: LocationViewModel?
+    var activityView: JGProgressHUD!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -47,6 +47,9 @@ class ViewController: UIViewController {
         mapView.isMyLocationEnabled = true
         mapView.settings.myLocationButton = true
         mapView.padding = UIEdgeInsets(top: 0, left: 0, bottom: 80, right: 16)
+
+        activityView = JGProgressHUD(style: .dark)
+        activityView.textLabel.text = "Loading"
         
 //        GetOrganization(location: T##LocationViewModel).execute(onSuccess: { (location: OrganizationResponse) in
 //            print(location)
@@ -93,9 +96,9 @@ class ViewController: UIViewController {
                         alert.addAction(alertAction)
                         self.present(alert, animated: true, completion: nil)
                     } else {
-                        IHProgressHUD.show()
+                        self.activityView.show(in: self.view)
                         viewModel.sendAllRequests() {
-                            IHProgressHUD.dismiss()
+                            self.activityView.dismiss(animated: true)
                         }
                     }
                 }
@@ -191,5 +194,3 @@ extension ViewController: UISearchBarDelegate {
         
     }
 }
-
-
