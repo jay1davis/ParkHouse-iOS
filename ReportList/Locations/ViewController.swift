@@ -80,7 +80,7 @@ class ViewController: UIViewController {
     
         chooseCategory.bottomOffset = CGPoint(x: 0, y: saveButton.bounds.height)
         
-        chooseCategory.dataSource = ["Distressed Commercial", "Commercial Lot", "Retail/Car Wash Site", "Triple Net Lease Site", "Apartments", "Hotel", "Developer", "Distressed Residential", "Residential Lots"]
+        chooseCategory.dataSource = ["Distressed Commercial", "Commercial Lot", "Retail/Car Wash Site", "Triple Net Lease Site", "Apartments", "Hotel", "Development", "Distressed Residential", "Residential Lots"]
         
         chooseCategory.selectionAction = { [weak self] (index, item) in
             if let self = self, let viewModel = self.viewModel {
@@ -175,6 +175,7 @@ extension ViewController: GMSMapViewDelegate {
 
 extension ViewController: UISearchBarDelegate {
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        searchBar.resignFirstResponder()
         guard let text = searchBar.text, text.count > 2 else { return }
         CLGeocoder().geocodeAddressString(text) { (placeMarks, error) in
             if let _ = error {
