@@ -26,6 +26,7 @@ class ViewController: UIViewController {
     var tempLocationDetails: LocationDetails? = nil
     var viewModel: LocationViewModel?
     var activityView: JGProgressHUD!
+    var mapInit: Bool? = false
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -47,9 +48,10 @@ class ViewController: UIViewController {
         mapView.isMyLocationEnabled = true
         mapView.settings.myLocationButton = true
         mapView.padding = UIEdgeInsets(top: 0, left: 0, bottom: 80, right: 16)
-
+        mapView.setMinZoom(17.0, maxZoom: 20.0)
         activityView = JGProgressHUD(style: .dark)
         activityView.textLabel.text = "Loading"
+        
         
 //        GetOrganization(location: T##LocationViewModel).execute(onSuccess: { (location: OrganizationResponse) in
 //            print(location)
@@ -57,7 +59,6 @@ class ViewController: UIViewController {
 //            print(error)
 //        })
     }
-    
     
     
     override func viewWillAppear(_ animated: Bool) {
@@ -114,22 +115,33 @@ extension ViewController: CLLocationManagerDelegate {
         
         let location = locations.last
         
-        let camera = GMSCameraPosition.camera(withLatitude: (location?.coordinate.latitude)!, longitude: (location?.coordinate.longitude)!, zoom: 17.0)
+            let camera = CLLocationCoordinate2D(latitude: (location?.coordinate.latitude)!, longitude: (location?.coordinate.longitude)!)
+            let updateCam = GMSCameraUpdate.setTarget(camera)
         
-        self.mapView?.animate(to: camera)
-        
-        //Finally stop updating location otherwise it will come again and again in this delegate
-        self.locationManager.stopUpdatingLocation()
-        
+            mapView.animate(with: updateCam)
+            
+       // }
+        //self.locationManager.stopUpdatingLocation()
     }
 
 }
 
 extension ViewController: GMSMapViewDelegate {
-    
+
+    func didTapMyLocationButton(for mapView: GMSMapView) -> Bool {
+        self.locationManager.startUpdatingLocation()
+        return true
+    }
     func mapView(_ mapView: GMSMapView, didTapAt coordinate: CLLocationCoordinate2D) {
         self.helperView.isHidden = true
         view.endEditing(true)
+    }
+    
+    func mapView(_ mapView: GMSMapView, willMove gesture: Bool) {
+        if (gesture){
+            self.locationManager.stopUpdatingLocation()
+            print("dragged")
+        }
     }
     
     func mapView(_ mapView: GMSMapView, didLongPressAt coordinate: CLLocationCoordinate2D) {
@@ -175,8 +187,9 @@ extension ViewController: GMSMapViewDelegate {
 
 extension ViewController: UISearchBarDelegate {
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
-        searchBar.resignFirstResponder()
+        self.locationManager.stopUpdatingLocation()
         guard let text = searchBar.text, text.count > 2 else { return }
+        searchBar.resignFirstResponder()
         CLGeocoder().geocodeAddressString(text) { (placeMarks, error) in
             if let _ = error {
                 return

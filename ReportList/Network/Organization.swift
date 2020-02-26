@@ -37,7 +37,7 @@ struct Organization: Encodable {
     var lastSaleDate: String = ""
     var zoning: String = ""
     var not_used: String = ""
-    var landArea : Double = 0
+    var landArea : String = "0"
     var category: String = ""
     var recordedOwner: String = ""
     
@@ -106,6 +106,7 @@ struct Organization: Encodable {
         self.zoning = result.land_use_code ?? ""
         self.category = location.getCategory()
         self.recordedOwner = result.owner ?? ""
+        self.landArea = result.acreage_deeded ?? "0"
         // land area is empty
 //            self.parcelCounty = result.parce
         

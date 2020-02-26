@@ -184,7 +184,7 @@ struct GetLocation: RequestType {
     var params: [String: Any?] = [
         "client": "54RY88KDHy",
         "v":"2",
-        "spatial_intersect":"POINT(-84.3350391 33.7129586)",
+        "spatial_intersect":"POINT(-84.3345049 33.7116718)",
         "si_srid":"4326"
     ]
     var data: RequestData {
